@@ -6,24 +6,23 @@ import java.util.Date;
 import java.util.Scanner;
 
 import model.entities.Reservation;
+import model.exceptions.DomainException;
 
 public class Program {
 
-  public static void main(String[] args) throws ParseException {
+  public static void main(String[] args) {
 
     Scanner sc = new Scanner(System.in);
     SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
 
-    System.out.print("Room number: ");
-    int rooNumber = sc.nextInt();
-    System.out.print("Check-in date (dd/MM/yyyy): ");
-    Date checkIn = sdf.parse(sc.next());
-    System.out.print("Check-out date (dd/MM/yyyy): ");
-    Date checkOut = sdf.parse(sc.next());
+    try {
+      System.out.print("Room number: ");
+      int rooNumber = sc.nextInt();
+      System.out.print("Check-in date (dd/MM/yyyy): ");
+      Date checkIn = sdf.parse(sc.next());
+      System.out.print("Check-out date (dd/MM/yyyy): ");
+      Date checkOut = sdf.parse(sc.next());
 
-    if (!checkOut.after(checkIn)) {
-      System.out.println("Error in reservation: Check-out date must be after check-in date ");
-    } else {
       Reservation reservation = new Reservation(rooNumber, checkIn, checkOut);
       System.out.println("Reservation: " + reservation);
 
@@ -33,15 +32,17 @@ public class Program {
       System.out.print("Check-out date (dd/MM/yyyy): ");
       checkOut = sdf.parse(sc.next());
 
-      System.out.println();
-      System.out.println();
-
-      String error = reservation.updateDates(checkIn, checkOut);
-      if (error != null) {
-        System.out.println("Error in reservation: " + error);
-      } else {
-        System.out.println("Reservation: " + reservation);
-      }
+      reservation.updateDates(checkIn, checkOut);
+      System.out.println("Reservation: " + reservation);
+    } 
+    catch (ParseException e) {
+      System.out.println("Invalid date format ");
+    } 
+    catch (DomainException e) {
+      System.out.println("Error in Reservation " + e.getMessage());
+    }
+    catch (RuntimeException e) {
+      System.out.println("Unexpected error ");
     }
     sc.close();
   }
